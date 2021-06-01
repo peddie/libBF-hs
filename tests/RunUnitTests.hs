@@ -1,8 +1,9 @@
 {-# Language BlockArguments #-}
+{-# Language LambdaCase #-}
 module Main(main) where
 
 import Test.Tasty (TestTree, defaultMain, testGroup)
-import Test.Tasty.HUnit ((@=?), assertFailure, testCase)
+import Test.Tasty.HUnit ((@=?), assertBool, assertEqual, assertFailure, testCase)
 
 import LibBF
 
@@ -46,6 +47,12 @@ main =
         , testCase "0 <= NaN" $ False @=? bfPosZero <= bfNaN
         ]
       ]
+    , testGroup "Transcendental functions"
+      [ dblTestCase "atan2 1 2" atan2 (bfAtan2 (float64 NearEven)) 1 2
+      , dblTestCase "atan2 2 1" atan2 (bfAtan2 (float64 NearEven)) 2 1
+      , checkPredicateTestCase "sin" (bfSin (float256 NearEven)) (bfIsZero) (bfFromDouble 0)
+      , checkPredicateTestCase "exp" (bfExp (float256 NearEven)) (== (bfFromDouble 1)) (bfFromDouble 0)
+      ]
     ]
 
 statusUnderflow :: Status -> Bool
@@ -82,3 +89,23 @@ bfSubnormalTestCase :: BigFloat -> Bool -> TestTree
 bfSubnormalTestCase bf expected =
   testCase (show bf) $
   expected @=? bfIsSubnormal (float32 NearEven) bf
+
+checkPredicateTestCase ::
+  Show a =>
+  String ->
+  (a -> (BigFloat, Status)) ->
+  (BigFloat -> Bool) ->
+  a ->
+  TestTree
+checkPredicateTestCase opName opBF predicate input =
+  testCase opName $ do
+    assertEqual
+      ("Status '" ++ show bfStatus ++ "' not OK for " ++ describeOp)
+      bfStatus
+      Ok
+    assertBool
+      ("Test predicate failed on result " ++ show bfRes ++ " on " ++ describeOp)
+      (predicate bfRes)
+  where
+    (bfRes, bfStatus) = opBF input
+    describeOp = opName ++ "(" ++ show input ++ ")"
