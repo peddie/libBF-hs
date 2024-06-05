@@ -1,6 +1,6 @@
 # Revision history for libBF-hs
 
-## next -- ????.??.??
+## 0.6.8 -- 2024.06.05
 
 * Fix a bug that would cause `(>)` and `(>=)` (in the `Ord BigFloat` instance)
   to return incorrect answers when one of the arguments is NaN.
