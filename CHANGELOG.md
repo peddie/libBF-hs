@@ -2,6 +2,8 @@
 
 ## next -- ????.??.??
 
+* Fix a bug that would cause `(>)` and `(>=)` (in the `Ord BigFloat` instance)
+  to return incorrect answers when one of the arguments is NaN.
 * Fix a bug which could cause incorrect behavior (e.g., infinite loops) on
   32-bit architectures.
 
