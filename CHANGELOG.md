@@ -1,5 +1,10 @@
 # Revision history for libBF-hs
 
+## next -- ????.??.??
+
+* Add  `bfConstPi`, `bfExp`, `bfLog`, `bfSin`, `bfCos`, `bfTan`, `bfAsin`,
+  `bfAcos`, `bfAtan`, and `bfAtan2`.
+
 ## 0.6.8 -- 2024.06.05
 
 * Fix a bug that would cause `(>)` and `(>=)` (in the `Ord BigFloat` instance)
